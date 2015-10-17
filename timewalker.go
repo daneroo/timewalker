@@ -14,6 +14,18 @@ const (
 	Year
 )
 
+func (hd HDuration) String() string {
+	switch hd {
+	case Day:
+		return "Day"
+	case Month:
+		return "Month"
+	case Year:
+		return "Year"
+	}
+	return ""
+}
+
 func Round(t time.Time, hd HDuration) time.Time {
 	year, month, day := t.Date()
 	switch hd {
@@ -27,16 +39,42 @@ func Round(t time.Time, hd HDuration) time.Time {
 	return t
 
 }
-func (hd HDuration) String() string {
+
+func Add(t time.Time, hd HDuration) time.Time {
+	var y, m, d int
 	switch hd {
 	case Day:
-		return "Day"
+		y, m, d = 0, 0, 1
 	case Month:
-		return "Month"
+		y, m, d = 0, 1, 0
 	case Year:
-		return "Year"
+		y, m, d = 1, 0, 0
 	}
-	return ""
+	return t.AddDate(y, m, d)
+}
+
+// produce times from a (incl) to b (excl)
+func Walk(a, b time.Time, hd HDuration) (<-chan time.Time, error) {
+	ch := make(chan time.Time)
+	ra := Round(a, hd)
+	rb := Round(b, hd)
+	if ra == rb {
+		rb = Add(rb, hd)
+	}
+
+	fmt.Printf("\n")
+	fmt.Printf("%s\n", time.RFC3339)
+	fmt.Printf(" a: %v\n", a)
+	fmt.Printf("ra: %v\n", ra)
+	go func() {
+		start := ra
+		for start.Before(rb) {
+			ch <- start
+			start = Add(start, hd)
+		}
+		close(ch)
+	}()
+	return ch, nil
 }
 
 type Interval struct {
