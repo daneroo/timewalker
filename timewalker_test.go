@@ -99,7 +99,7 @@ func TestAdding(t *testing.T) {
 	}
 }
 
-func ExampleWalk() {
+func ExampleWalk_Month() {
 	ch, _ := Walk(parseTime("2004-02-03T12:45:56Z"), parseTime("2004-03-03T12:45:56Z"), Day)
 	for t := range ch {
 		fmt.Printf("%s\n", t)
@@ -136,7 +136,7 @@ func ExampleWalk() {
 	// 2004-03-02 00:00:00 +0000 UTC
 }
 
-func ExampleWalkMonthLocalAndUTC() {
+func ExampleWalk_MonthLocalAndUTC() {
 	l, _ := time.LoadLocation("America/Montreal")
 	ch, _ := Walk(parseTime("2001-02-03T12:45:56Z").In(l), parseTime("2002-02-03T12:45:56Z"), Month)
 	for t := range ch {
@@ -156,7 +156,8 @@ func ExampleWalkMonthLocalAndUTC() {
 	// 2001-12-01 00:00:00 -0500 EST 2001-12-01 05:00:00 +0000 UTC
 	// 2002-01-01 00:00:00 -0500 EST 2002-01-01 05:00:00 +0000 UTC
 }
-func ExampleWalkYear() {
+
+func ExampleWalk_Year() {
 	ch, _ := Walk(parseTime("2001-06-03T12:45:56Z"), parseTime("2005-07-03T12:45:56Z"), Year)
 	for t := range ch {
 		fmt.Printf("%s\n", t)
