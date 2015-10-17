@@ -96,6 +96,8 @@ func (i Interval) String() string {
 // -swap Start,End if appropriate
 // Truncate Start, Round up End
 // Make sure we have at least one interval.
+// BUG(daneroo):nlet well defined yet
+
 func (i Interval) Round(d time.Duration) Interval {
 	if i.End.Before(i.Start) {
 		i.End, i.Start = i.Start, i.End
