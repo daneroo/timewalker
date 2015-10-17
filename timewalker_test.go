@@ -99,7 +99,7 @@ func TestAdding(t *testing.T) {
 	}
 }
 
-func ExampleWalkDay() {
+func ExampleWalk() {
 	ch, _ := Walk(parseTime("2004-02-03T12:45:56Z"), parseTime("2004-03-03T12:45:56Z"), Day)
 	for t := range ch {
 		fmt.Printf("%s\n", t)

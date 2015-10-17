@@ -17,6 +17,7 @@ const (
 	Year
 )
 
+// Produces Human readble represations of the HDuration enum values
 func (hd HDuration) String() string {
 	switch hd {
 	case Day:
