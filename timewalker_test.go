@@ -62,6 +62,14 @@ func TestRounding(t *testing.T) {
 	}
 }
 
+func ExampleRound() {
+	t := parseTime("2001-02-03T12:45:56Z")
+	rt := Round(t, Month)
+	fmt.Printf("%v -> %v", t, rt)
+	// Output:
+	// 2001-02-03 12:45:56 +0000 UTC -> 2001-02-01 00:00:00 +0000 UTC
+}
+
 var addingTests = []struct {
 	inp  time.Time // input
 	hdur HDuration // Rounding duration
