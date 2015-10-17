@@ -62,10 +62,10 @@ func Walk(a, b time.Time, hd HDuration) (<-chan time.Time, error) {
 		rb = Add(rb, hd)
 	}
 
-	fmt.Printf("\n")
-	fmt.Printf("%s\n", time.RFC3339)
-	fmt.Printf(" a: %v\n", a)
-	fmt.Printf("ra: %v\n", ra)
+	// fmt.Printf("\n")
+	// fmt.Printf("%s\n", time.RFC3339)
+	// fmt.Printf(" a: %v\n", a)
+	// fmt.Printf("ra: %v\n", ra)
 	go func() {
 		start := ra
 		for start.Before(rb) {
