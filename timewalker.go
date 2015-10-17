@@ -1,3 +1,5 @@
+// go package to generate sequential time intervals
+// for days,months, and years, accounting for Timezones.
 package timewalker
 
 import (
