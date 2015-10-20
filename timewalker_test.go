@@ -97,7 +97,7 @@ func ExampleRound_dayInLocation() {
 	// 2001-02-03 07:45:56 -0500 EST -> 2001-02-03 00:00:00 -0500 EST
 }
 
-func ExampleParseTimeInLocation() {
+func Example_parseTimeInLocation() {
 	// default is in UTC (..Z)
 	fmt.Println(parseTime("2001-02-03T12:45:56Z"))
 	// Now show it's equivalent in EST
