@@ -87,6 +87,94 @@ func ExampleRound_day() {
 	// 2001-02-03 12:45:56 +0000 UTC -> 2001-02-03 00:00:00 +0000 UTC
 }
 
+func ExampleRound_dayInLocation() {
+	l, _ := time.LoadLocation("America/Montreal")
+	t := parseTime("2001-02-03T12:45:56Z").In(l)
+	rt := Round(t, Day)
+	fmt.Printf("%v -> %v", t, rt)
+	// Output:
+	// 2001-02-03 07:45:56 -0500 EST -> 2001-02-03 00:00:00 -0500 EST
+}
+
+func BenchmarkDateConstructor(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = time.Date(2001, time.January, 1, 0, 0, 0, 0, time.UTC)
+	}
+}
+func BenchmarkDateConstructorInLocation(b *testing.B) {
+	l, _ := time.LoadLocation("America/Montreal")
+	for i := 0; i < b.N; i++ {
+		_ = time.Date(2001, time.January, 1, 0, 0, 0, 0, l)
+	}
+}
+func BenchmarkRoundDay(b *testing.B) {
+	t := parseTime("2001-02-03T12:45:56Z")
+	for i := 0; i < b.N; i++ {
+		_ = Round(t, Day)
+	}
+}
+
+// Performs same benchmark as Round(t,Day) but not using our Round(Duration) method
+func BenchmarkRoundDayExplicit(b *testing.B) {
+	t := parseTime("2001-02-03T12:45:56Z")
+	for i := 0; i < b.N; i++ {
+		year, month, day := t.Date()
+		_ = time.Date(year, month, day, 0, 0, 0, 0, t.Location())
+	}
+}
+
+func BenchmarkRoundDayInLocation(b *testing.B) {
+	l, _ := time.LoadLocation("America/Montreal")
+	t := parseTime("2001-02-03T12:45:56Z").In(l)
+	for i := 0; i < b.N; i++ {
+		_ = Round(t, Day)
+	}
+}
+
+// Performs same benchmark as Round(t,Day) in Location but not using our Round(Duration) method
+func BenchmarkRoundDayInLocationExplicit(b *testing.B) {
+	l, _ := time.LoadLocation("America/Montreal")
+	t := parseTime("2001-02-03T12:45:56Z").In(l)
+	for i := 0; i < b.N; i++ {
+		year, month, day := t.Date()
+		_ = time.Date(year, month, day, 0, 0, 0, 0, l)
+	}
+}
+
+func BenchmarkRoundYear(b *testing.B) {
+	t := parseTime("2001-02-03T12:45:56Z")
+	for i := 0; i < b.N; i++ {
+		_ = Round(t, Year)
+	}
+}
+
+// Performs same benchmark as Round(t,Day) but not using our Round(Duration) method
+func BenchmarkRoundYearExplicit(b *testing.B) {
+	t := parseTime("2001-02-03T12:45:56Z")
+	for i := 0; i < b.N; i++ {
+		year, _, _ := t.Date()
+		_ = time.Date(year, time.January, 1, 0, 0, 0, 0, t.Location())
+	}
+}
+
+func BenchmarkRoundYearInLocation(b *testing.B) {
+	l, _ := time.LoadLocation("America/Montreal")
+	t := parseTime("2001-02-03T12:45:56Z").In(l)
+	for i := 0; i < b.N; i++ {
+		_ = Round(t, Year)
+	}
+}
+
+// Performs same benchmark as Round(t,Day) in Location but not using our Round(Duration) method
+func BenchmarkRoundYearInLocationExplicit(b *testing.B) {
+	l, _ := time.LoadLocation("America/Montreal")
+	t := parseTime("2001-02-03T12:45:56Z").In(l)
+	for i := 0; i < b.N; i++ {
+		year, _, _ := t.Date()
+		_ = time.Date(year, time.January, 1, 0, 0, 0, 0, t.Location())
+	}
+}
+
 var addingTests = []struct {
 	inp time.Time // input
 	dur Duration  // Rounding duration
@@ -113,6 +201,38 @@ func TestAdding(t *testing.T) {
 		if actual != tt.exp {
 			t.Errorf("Add(%s,%s): exp: %v, act: %v", tt.inp, tt.dur, tt.exp, actual)
 		}
+	}
+}
+
+func BenchmarkAddDay(b *testing.B) {
+	t := parseTime("2001-02-03T12:45:56Z")
+	for i := 0; i < b.N; i++ {
+		_ = Add(t, Day)
+	}
+}
+
+// Performs same benchmark as Add(t,Day) but not using our Add(Duration) method
+func BenchmarkAddDayExplicit(b *testing.B) {
+	t := parseTime("2001-02-03T12:45:56Z")
+	for i := 0; i < b.N; i++ {
+		_ = t.AddDate(0, 0, 1)
+	}
+}
+
+func BenchmarkAddDayInLocation(b *testing.B) {
+	l, _ := time.LoadLocation("America/Montreal")
+	t := parseTime("2001-02-03T12:45:56Z").In(l)
+	for i := 0; i < b.N; i++ {
+		_ = Add(t, Day)
+	}
+}
+
+// Performs same benchmark as Add(t,Day) in Location but not using our Add(Duration) method
+func BenchmarkAddDayInLocationExplicit(b *testing.B) {
+	l, _ := time.LoadLocation("America/Montreal")
+	t := parseTime("2001-02-03T12:45:56Z").In(l)
+	for i := 0; i < b.N; i++ {
+		_ = t.AddDate(0, 0, 1)
 	}
 }
 
