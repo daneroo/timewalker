@@ -79,6 +79,7 @@ func ExampleRound_month() {
 	// Output:
 	// 2001-02-03 12:45:56 +0000 UTC -> 2001-02-01 00:00:00 +0000 UTC
 }
+
 func ExampleRound_day() {
 	t := parseTime("2001-02-03T12:45:56Z")
 	rt := Round(t, Day)
@@ -94,6 +95,37 @@ func ExampleRound_dayInLocation() {
 	fmt.Printf("%v -> %v", t, rt)
 	// Output:
 	// 2001-02-03 07:45:56 -0500 EST -> 2001-02-03 00:00:00 -0500 EST
+}
+
+func ExampleParseTimeInLocation() {
+	// default is in UTC (..Z)
+	fmt.Println(parseTime("2001-02-03T12:45:56Z"))
+	// Now show it's equivalent in EST
+	loc, _ := time.LoadLocation("America/Montreal")
+	fmt.Println(parseTime("2001-02-03T12:45:56Z").In(loc))
+	// Parse EST time directly
+	fmt.Println(parseTime("2001-02-03T07:45:56-05:00"))
+	// Output:
+	// 2001-02-03 12:45:56 +0000 UTC
+	// 2001-02-03 07:45:56 -0500 EST
+	// 2001-02-03 07:45:56 -0500 EST
+}
+
+func BenchmarkParseTime(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = parseTime("2001-02-03T12:45:56Z")
+	}
+}
+func BenchmarkParseTimeInLocation(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_ = parseTime("2001-02-03T07:45:56-05:00")
+	}
+}
+
+func BenchmarkParseTimeExplicit(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, _ = time.Parse(time.RFC3339, "2001-02-03T12:45:56Z")
+	}
 }
 
 func BenchmarkDateConstructor(b *testing.B) {
