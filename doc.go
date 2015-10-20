@@ -2,6 +2,6 @@
 // Use of this source code is governed by a BSD-style
 
 /*
-Package timewalkermanages sequences of time events
+Package timewalker manages sequences of time events. It is meant to be a source channel of time.Time, or timewalker.Interval
 */
 package timewalker
