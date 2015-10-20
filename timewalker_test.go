@@ -186,7 +186,7 @@ func ExampleWalk_year() {
 	// 2004-01-01 00:00:00 +0000 UTC
 }
 
-func Example_with_location() {
+func Example_location() {
 	t1 := parseTime("2001-06-03T12:45:56Z")
 	t2 := parseTime("2001-01-03T12:45:56Z")
 	u, _ := time.LoadLocation("UTC")
