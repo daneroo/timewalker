@@ -1,5 +1,5 @@
-// go package to generate sequential time intervals
-// for days,months, and years, accounting for Timezones.
+// Package timewalker manages sequences of time instances. It is meant to be a source channel of time.Time, or timewalker.Interval
+
 package timewalker
 
 import (
@@ -7,19 +7,19 @@ import (
 	"time"
 )
 
-// Human Readable Durations (non-arithmetic)
-type HDuration int
+// Common Practical Durations, which do not have the same semantics as time.Duration (non-arithmetic), in the sense that not all years, month or days have the same length. For Examples are leap years, months with different number of days, and days on daylight savings boundaries which may not have 24 hours.
+type Duration int
 
-// Different pakage constants defining an enum type for HDuration
+// Different pakage constants defining an enum type for Duration
 const (
-	Day HDuration = iota
+	Day Duration = iota
 	Month
 	Year
 )
 
-// Produces Human readble represations of the HDuration enum values
-func (hd HDuration) String() string {
-	switch hd {
+// Produces Human readble represations of the Duration enum values
+func (d Duration) String() string {
+	switch d {
 	case Day:
 		return "Day"
 	case Month:
@@ -30,9 +30,9 @@ func (hd HDuration) String() string {
 	return ""
 }
 
-func Round(t time.Time, hd HDuration) time.Time {
+func Round(t time.Time, d Duration) time.Time {
 	year, month, day := t.Date()
-	switch hd {
+	switch d {
 	case Day:
 		return time.Date(year, month, day, 0, 0, 0, 0, t.Location())
 	case Month:
@@ -44,9 +44,9 @@ func Round(t time.Time, hd HDuration) time.Time {
 
 }
 
-func Add(t time.Time, hd HDuration) time.Time {
+func Add(t time.Time, dur Duration) time.Time {
 	var y, m, d int
-	switch hd {
+	switch dur {
 	case Day:
 		y, m, d = 0, 0, 1
 	case Month:
@@ -58,12 +58,12 @@ func Add(t time.Time, hd HDuration) time.Time {
 }
 
 // produce times from a (incl) to b (excl)
-func Walk(a, b time.Time, hd HDuration) (<-chan time.Time, error) {
+func Walk(a, b time.Time, d Duration) (<-chan time.Time, error) {
 	ch := make(chan time.Time)
-	ra := Round(a, hd)
-	rb := Round(b, hd)
+	ra := Round(a, d)
+	rb := Round(b, d)
 	if ra == rb {
-		rb = Add(rb, hd)
+		rb = Add(rb, d)
 	}
 
 	// fmt.Printf("\n")
@@ -74,7 +74,7 @@ func Walk(a, b time.Time, hd HDuration) (<-chan time.Time, error) {
 		start := ra
 		for start.Before(rb) {
 			ch <- start
-			start = Add(start, hd)
+			start = Add(start, d)
 		}
 		close(ch)
 	}()

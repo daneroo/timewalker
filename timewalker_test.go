@@ -7,24 +7,24 @@ import (
 )
 
 var durationTests = []struct {
-	hdur HDuration
-	exp  string // expected result
+	dur Duration
+	exp string // expected result
 }{
 	{Day, "Day"},
 	{Month, "Month"},
 	{Year, "Year"},
 }
 
-func TestHDuration(t *testing.T) {
+func TestDuration(t *testing.T) {
 	for _, tt := range durationTests {
-		actual := tt.hdur.String()
+		actual := tt.dur.String()
 		if actual != tt.exp {
-			t.Errorf("(%s): exp: %v act: %v", tt.hdur, tt.exp, actual)
+			t.Errorf("(%s): exp: %v act: %v", tt.dur, tt.exp, actual)
 		}
 	}
 }
 
-func ExampleHDuration_String() {
+func ExampleDuration_String() {
 	fmt.Printf("Day: %v\n", Day)
 	fmt.Printf("Month: %v\n", Month)
 	fmt.Printf("Year: %v\n", Year)
@@ -44,30 +44,30 @@ func parseTime(ts string) time.Time {
 }
 
 var roundingTests = []struct {
-	inp  time.Time // input
-	hdur HDuration // Rounding duration
-	exp  time.Time // expected result
+	inp time.Time // input
+	dur Duration  // Rounding duration
+	exp time.Time // expected result
 }{
 	{ // Day
-		inp:  parseTime("2001-02-03T12:45:56Z"),
-		hdur: Day,
-		exp:  parseTime("2001-02-03T00:00:00Z"),
+		inp: parseTime("2001-02-03T12:45:56Z"),
+		dur: Day,
+		exp: parseTime("2001-02-03T00:00:00Z"),
 	}, { //Month
-		inp:  parseTime("2001-02-03T12:45:56Z"),
-		hdur: Month,
-		exp:  parseTime("2001-02-01T00:00:00Z"),
+		inp: parseTime("2001-02-03T12:45:56Z"),
+		dur: Month,
+		exp: parseTime("2001-02-01T00:00:00Z"),
 	}, { //Year
-		inp:  parseTime("2001-02-03T12:45:56Z"),
-		hdur: Year,
-		exp:  parseTime("2001-01-01T00:00:00Z"),
+		inp: parseTime("2001-02-03T12:45:56Z"),
+		dur: Year,
+		exp: parseTime("2001-01-01T00:00:00Z"),
 	},
 }
 
 func TestRounding(t *testing.T) {
 	for _, tt := range roundingTests {
-		actual := Round(tt.inp, tt.hdur)
+		actual := Round(tt.inp, tt.dur)
 		if actual != tt.exp {
-			t.Errorf("Round(%s,%s): \nexp: %v, \nact: %v", tt.inp, tt.hdur, tt.exp, actual)
+			t.Errorf("Round(%s,%s): \nexp: %v, \nact: %v", tt.inp, tt.dur, tt.exp, actual)
 		}
 	}
 }
@@ -88,30 +88,30 @@ func ExampleRound_day() {
 }
 
 var addingTests = []struct {
-	inp  time.Time // input
-	hdur HDuration // Rounding duration
-	exp  time.Time // expected result
+	inp time.Time // input
+	dur Duration  // Rounding duration
+	exp time.Time // expected result
 }{
 	{ // Day
-		inp:  parseTime("2001-02-03T12:45:56Z"),
-		hdur: Day,
-		exp:  parseTime("2001-02-04T12:45:56Z"),
+		inp: parseTime("2001-02-03T12:45:56Z"),
+		dur: Day,
+		exp: parseTime("2001-02-04T12:45:56Z"),
 	}, { //Month
-		inp:  parseTime("2001-02-03T12:45:56Z"),
-		hdur: Month,
-		exp:  parseTime("2001-03-03T12:45:56Z"),
+		inp: parseTime("2001-02-03T12:45:56Z"),
+		dur: Month,
+		exp: parseTime("2001-03-03T12:45:56Z"),
 	}, { //Year
-		inp:  parseTime("2001-02-03T12:45:56Z"),
-		hdur: Year,
-		exp:  parseTime("2002-02-03T12:45:56Z"),
+		inp: parseTime("2001-02-03T12:45:56Z"),
+		dur: Year,
+		exp: parseTime("2002-02-03T12:45:56Z"),
 	},
 }
 
 func TestAdding(t *testing.T) {
 	for _, tt := range addingTests {
-		actual := Add(tt.inp, tt.hdur)
+		actual := Add(tt.inp, tt.dur)
 		if actual != tt.exp {
-			t.Errorf("Add(%s,%s): exp: %v, act: %v", tt.inp, tt.hdur, tt.exp, actual)
+			t.Errorf("Add(%s,%s): exp: %v, act: %v", tt.inp, tt.dur, tt.exp, actual)
 		}
 	}
 }
