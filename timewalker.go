@@ -96,7 +96,7 @@ func (i Interval) String() string {
 // -swap Start,End if appropriate
 // Truncate Start, Round up End
 // Make sure we have at least one interval.
-// BUG(daneroo): Not well defined yet
+// BUG(daneroo): Interval Rounding behavior is not well defined yet. This is also an example of a BUG comment showing up in the godocs
 
 func (i Interval) Round(d time.Duration) Interval {
 	if i.End.Before(i.Start) {

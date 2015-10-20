@@ -174,7 +174,7 @@ func ExampleWalk_monthLocalAndUTC() {
 	// 2002-01-01 00:00:00 -0500 EST 2002-01-01 05:00:00 +0000 UTC
 }
 
-func ExampleWalk_tear() {
+func ExampleWalk_year() {
 	ch, _ := Walk(parseTime("2001-06-03T12:45:56Z"), parseTime("2005-07-03T12:45:56Z"), Year)
 	for t := range ch {
 		fmt.Printf("%s\n", t)
@@ -186,7 +186,7 @@ func ExampleWalk_tear() {
 	// 2004-01-01 00:00:00 +0000 UTC
 }
 
-func ExampleLocation() {
+func Example_with_location() {
 	t1 := parseTime("2001-06-03T12:45:56Z")
 	t2 := parseTime("2001-01-03T12:45:56Z")
 	u, _ := time.LoadLocation("UTC")
