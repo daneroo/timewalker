@@ -24,6 +24,16 @@ func TestHDuration(t *testing.T) {
 	}
 }
 
+func ExampleHDuration_String() {
+	fmt.Printf("Day: %v\n", Day)
+	fmt.Printf("Month: %v\n", Month)
+	fmt.Printf("Year: %v\n", Year)
+	// Output:
+	// Day: Day
+	// Month: Month
+	// Year: Year
+}
+
 func parseTime(ts string) time.Time {
 	lyt := time.RFC3339
 	t, err := time.Parse(lyt, ts)
