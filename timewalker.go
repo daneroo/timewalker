@@ -10,7 +10,7 @@ import (
 // Human Readable Durations (non-arithmetic)
 type HDuration int
 
-// Different pakage constant defineing an enu typr fot HDuration
+// Different pakage constants defining an enum type for HDuration
 const (
 	Day HDuration = iota
 	Month
