@@ -18,6 +18,7 @@ func Example_parseTimeInLocation() {
 	fmt.Println(parseTime("2001-02-03T12:45:56Z").In(loc))
 
 	// Parse EST time directly
+	// TODO(daneroo) this seems to depend on Local timezone being set to America/Montreal or equiv...
 	fmt.Println(parseTime("2001-02-03T07:45:56-05:00"))
 
 	// Parse EDT time directly
