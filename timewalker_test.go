@@ -6,6 +6,30 @@ import (
 	"time"
 )
 
+// package level example parsing time in Location
+func Example_parseTimeInLocation() {
+	// This is how we parse time literals with time.RFC3339
+
+	// default is in UTC when literal terminates in ..Z
+	fmt.Println(parseTime("2001-02-03T12:45:56Z"))
+
+	// Now show it's equivalent in EST
+	loc, _ := time.LoadLocation("America/Montreal")
+	fmt.Println(parseTime("2001-02-03T12:45:56Z").In(loc))
+
+	// Parse EST time directly
+	fmt.Println(parseTime("2001-02-03T07:45:56-05:00"))
+
+	// Parse EDT time directly
+	fmt.Println(parseTime("2001-07-03T07:45:56-04:00"))
+
+	// Output:
+	// 2001-02-03 12:45:56 +0000 UTC
+	// 2001-02-03 07:45:56 -0500 EST
+	// 2001-02-03 07:45:56 -0500 EST
+	// 2001-07-03 07:45:56 -0400 EDT
+}
+
 var durationTests = []struct {
 	dur Duration
 	exp string // expected result
@@ -44,7 +68,7 @@ func parseTime(ts string) time.Time {
 	return t
 }
 
-var roundingTests = []struct {
+var durationRoundingTests = []struct {
 	inp time.Time // input
 	dur Duration  // Rounding duration
 	exp time.Time // expected result
@@ -64,8 +88,8 @@ var roundingTests = []struct {
 	},
 }
 
-func TestRounding(t *testing.T) {
-	for _, tt := range roundingTests {
+func TestDurationRounding(t *testing.T) {
+	for _, tt := range durationRoundingTests {
 		actual := tt.dur.Round(tt.inp)
 		if actual != tt.exp {
 			t.Errorf("%s.Round(%s): \nexp: %v, \nact: %v", tt.dur, tt.inp, tt.exp, actual)
@@ -99,30 +123,7 @@ func ExampleDuration_Round_dayInLocation() {
 	// 2001-02-03 07:45:56 -0500 EST -> 2001-02-03 00:00:00 -0500 EST
 }
 
-func Example_parseTimeInLocation() {
-	// This is how we parse time literals with time.RFC3339
-
-	// default is in UTC when literal terminates in ..Z
-	fmt.Println(parseTime("2001-02-03T12:45:56Z"))
-
-	// Now show it's equivalent in EST
-	loc, _ := time.LoadLocation("America/Montreal")
-	fmt.Println(parseTime("2001-02-03T12:45:56Z").In(loc))
-
-	// Parse EST time directly
-	fmt.Println(parseTime("2001-02-03T07:45:56-05:00"))
-
-	// Parse EDT time directly
-	fmt.Println(parseTime("2001-07-03T07:45:56-04:00"))
-
-	// Output:
-	// 2001-02-03 12:45:56 +0000 UTC
-	// 2001-02-03 07:45:56 -0500 EST
-	// 2001-02-03 07:45:56 -0500 EST
-	// 2001-07-03 07:45:56 -0400 EDT
-}
-
-var addingTests = []struct {
+var durationAddingTests = []struct {
 	inp time.Time // input
 	dur Duration  // Rounding duration
 	exp time.Time // expected result
@@ -142,8 +143,8 @@ var addingTests = []struct {
 	},
 }
 
-func TestAdding(t *testing.T) {
-	for _, tt := range addingTests {
+func TestDurationAdding(t *testing.T) {
+	for _, tt := range durationAddingTests {
 		actual := tt.dur.AddTo(tt.inp)
 		if actual != tt.exp {
 			t.Errorf("%s.AddTo(%s): exp: %v, act: %v", tt.dur, tt.inp, tt.exp, actual)
