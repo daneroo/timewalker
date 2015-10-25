@@ -143,6 +143,17 @@ func TestDurationAdding(t *testing.T) {
 	}
 }
 
+func TestWalkEmptyInterval(t *testing.T) {
+	ch, _ := Walk(parseTime("2001-02-03T12:45:56Z"), parseTime("2001-02-03T12:45:56Z"), Day)
+	count := 0
+	for _ = range ch {
+		count++
+	}
+	if count != 1 {
+		t.Error("Expect empty interval to fire once")
+	}
+}
+
 func ExampleWalk_month() {
 	ch, _ := Walk(parseTime("2004-02-03T12:45:56Z"), parseTime("2004-03-03T12:45:56Z"), Day)
 	for t := range ch {
