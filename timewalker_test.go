@@ -58,16 +58,6 @@ func ExampleDuration_String() {
 	// Year: Year
 }
 
-// Utility function for time literals in our tests
-func parseTime(ts string) time.Time {
-	lyt := time.RFC3339
-	t, err := time.Parse(lyt, ts)
-	if err != nil {
-		panic(err)
-	}
-	return t
-}
-
 var durationRoundingTests = []struct {
 	inp time.Time // input
 	dur Duration  // Rounding duration
@@ -311,4 +301,14 @@ func TestTimeWalker(t *testing.T) {
 	if len(result) != 10 {
 		t.Errorf("Generated interval has wrong length: %d", len(result))
 	}
+}
+
+// Utility function for time literals in our tests
+func parseTime(ts string) time.Time {
+	lyt := time.RFC3339
+	t, err := time.Parse(lyt, ts)
+	if err != nil {
+		panic(err)
+	}
+	return t
 }
