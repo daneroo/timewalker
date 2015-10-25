@@ -19,26 +19,27 @@ const (
 
 // Produces Human readble represations of the Duration enum values
 func (d Duration) String() string {
+	str := "Invalid"
 	switch d {
 	case Day:
-		return "Day"
+		str = "Day"
 	case Month:
-		return "Month"
+		str = "Month"
 	case Year:
-		return "Year"
+		str = "Year"
 	}
-	return ""
+	return str
 }
 
 func (d Duration) Round(t time.Time) time.Time {
 	year, month, day := t.Date()
 	switch d {
 	case Day:
-		return time.Date(year, month, day, 0, 0, 0, 0, t.Location())
+		t = time.Date(year, month, day, 0, 0, 0, 0, t.Location())
 	case Month:
-		return time.Date(year, month, 1, 0, 0, 0, 0, t.Location())
+		t = time.Date(year, month, 1, 0, 0, 0, 0, t.Location())
 	case Year:
-		return time.Date(year, time.January, 1, 0, 0, 0, 0, t.Location())
+		t = time.Date(year, time.January, 1, 0, 0, 0, 0, t.Location())
 	}
 	return t
 }
