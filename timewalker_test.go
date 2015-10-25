@@ -34,6 +34,7 @@ func ExampleDuration_String() {
 	// Year: Year
 }
 
+// Utility function for time literals in our tests
 func parseTime(ts string) time.Time {
 	lyt := time.RFC3339
 	t, err := time.Parse(lyt, ts)
@@ -65,50 +66,60 @@ var roundingTests = []struct {
 
 func TestRounding(t *testing.T) {
 	for _, tt := range roundingTests {
-		actual := Round(tt.inp, tt.dur)
+		actual := tt.dur.Round(tt.inp)
 		if actual != tt.exp {
-			t.Errorf("Round(%s,%s): \nexp: %v, \nact: %v", tt.inp, tt.dur, tt.exp, actual)
+			t.Errorf("%s.Round(%s): \nexp: %v, \nact: %v", tt.dur, tt.inp, tt.exp, actual)
 		}
 	}
 }
 
-func ExampleRound_month() {
+func ExampleDuration_Round_month() {
+	// t := parseTime("2001-02-03T12:45:56Z")
 	t := parseTime("2001-02-03T12:45:56Z")
-	rt := Round(t, Month)
+	rt := Month.Round(t)
 	fmt.Printf("%v -> %v", t, rt)
 	// Output:
 	// 2001-02-03 12:45:56 +0000 UTC -> 2001-02-01 00:00:00 +0000 UTC
 }
 
-func ExampleRound_day() {
+func ExampleDuration_Round_day() {
 	t := parseTime("2001-02-03T12:45:56Z")
-	rt := Round(t, Day)
+	rt := Day.Round(t)
 	fmt.Printf("%v -> %v", t, rt)
 	// Output:
 	// 2001-02-03 12:45:56 +0000 UTC -> 2001-02-03 00:00:00 +0000 UTC
 }
 
-func ExampleRound_dayInLocation() {
+func ExampleDuration_Round_dayInLocation() {
 	l, _ := time.LoadLocation("America/Montreal")
 	t := parseTime("2001-02-03T12:45:56Z").In(l)
-	rt := Round(t, Day)
+	rt := Day.Round(t)
 	fmt.Printf("%v -> %v", t, rt)
 	// Output:
 	// 2001-02-03 07:45:56 -0500 EST -> 2001-02-03 00:00:00 -0500 EST
 }
 
 func Example_parseTimeInLocation() {
-	// default is in UTC (..Z)
+	// This is how we parse time literals with time.RFC3339
+
+	// default is in UTC when literal terminates in ..Z
 	fmt.Println(parseTime("2001-02-03T12:45:56Z"))
+
 	// Now show it's equivalent in EST
 	loc, _ := time.LoadLocation("America/Montreal")
 	fmt.Println(parseTime("2001-02-03T12:45:56Z").In(loc))
+
 	// Parse EST time directly
 	fmt.Println(parseTime("2001-02-03T07:45:56-05:00"))
+
+	// Parse EDT time directly
+	fmt.Println(parseTime("2001-07-03T07:45:56-04:00"))
+
 	// Output:
 	// 2001-02-03 12:45:56 +0000 UTC
 	// 2001-02-03 07:45:56 -0500 EST
 	// 2001-02-03 07:45:56 -0500 EST
+	// 2001-07-03 07:45:56 -0400 EDT
 }
 
 func BenchmarkParseTime(b *testing.B) {
@@ -128,25 +139,14 @@ func BenchmarkParseTimeExplicit(b *testing.B) {
 	}
 }
 
-func BenchmarkDateConstructor(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		_ = time.Date(2001, time.January, 1, 0, 0, 0, 0, time.UTC)
-	}
-}
-func BenchmarkDateConstructorInLocation(b *testing.B) {
-	l, _ := time.LoadLocation("America/Montreal")
-	for i := 0; i < b.N; i++ {
-		_ = time.Date(2001, time.January, 1, 0, 0, 0, 0, l)
-	}
-}
 func BenchmarkRoundDay(b *testing.B) {
 	t := parseTime("2001-02-03T12:45:56Z")
 	for i := 0; i < b.N; i++ {
-		_ = Round(t, Day)
+		_ = Day.Round(t)
 	}
 }
 
-// Performs same benchmark as Round(t,Day) but not using our Round(Duration) method
+// Performs same benchmark as Day.Round(t) but not using our Duration.Round() method
 func BenchmarkRoundDayExplicit(b *testing.B) {
 	t := parseTime("2001-02-03T12:45:56Z")
 	for i := 0; i < b.N; i++ {
@@ -159,11 +159,11 @@ func BenchmarkRoundDayInLocation(b *testing.B) {
 	l, _ := time.LoadLocation("America/Montreal")
 	t := parseTime("2001-02-03T12:45:56Z").In(l)
 	for i := 0; i < b.N; i++ {
-		_ = Round(t, Day)
+		_ = Day.Round(t)
 	}
 }
 
-// Performs same benchmark as Round(t,Day) in Location but not using our Round(Duration) method
+// Performs same benchmark as Day.Round(t) in Location but not using our Duration.Round() method
 func BenchmarkRoundDayInLocationExplicit(b *testing.B) {
 	l, _ := time.LoadLocation("America/Montreal")
 	t := parseTime("2001-02-03T12:45:56Z").In(l)
@@ -176,11 +176,11 @@ func BenchmarkRoundDayInLocationExplicit(b *testing.B) {
 func BenchmarkRoundYear(b *testing.B) {
 	t := parseTime("2001-02-03T12:45:56Z")
 	for i := 0; i < b.N; i++ {
-		_ = Round(t, Year)
+		_ = Year.Round(t)
 	}
 }
 
-// Performs same benchmark as Round(t,Day) but not using our Round(Duration) method
+// Performs same benchmark as Year.Round(t) but not using our Duration.Round() method
 func BenchmarkRoundYearExplicit(b *testing.B) {
 	t := parseTime("2001-02-03T12:45:56Z")
 	for i := 0; i < b.N; i++ {
@@ -193,11 +193,11 @@ func BenchmarkRoundYearInLocation(b *testing.B) {
 	l, _ := time.LoadLocation("America/Montreal")
 	t := parseTime("2001-02-03T12:45:56Z").In(l)
 	for i := 0; i < b.N; i++ {
-		_ = Round(t, Year)
+		_ = Year.Round(t)
 	}
 }
 
-// Performs same benchmark as Round(t,Day) in Location but not using our Round(Duration) method
+// Performs same benchmark as Year.Round(t) in Location but not using our Duration.Round() method
 func BenchmarkRoundYearInLocationExplicit(b *testing.B) {
 	l, _ := time.LoadLocation("America/Montreal")
 	t := parseTime("2001-02-03T12:45:56Z").In(l)
@@ -229,9 +229,9 @@ var addingTests = []struct {
 
 func TestAdding(t *testing.T) {
 	for _, tt := range addingTests {
-		actual := Add(tt.inp, tt.dur)
+		actual := tt.dur.AddTo(tt.inp)
 		if actual != tt.exp {
-			t.Errorf("Add(%s,%s): exp: %v, act: %v", tt.inp, tt.dur, tt.exp, actual)
+			t.Errorf("%s.AddTo(%s): exp: %v, act: %v", tt.dur, tt.inp, tt.exp, actual)
 		}
 	}
 }
@@ -239,11 +239,11 @@ func TestAdding(t *testing.T) {
 func BenchmarkAddDay(b *testing.B) {
 	t := parseTime("2001-02-03T12:45:56Z")
 	for i := 0; i < b.N; i++ {
-		_ = Add(t, Day)
+		_ = Day.AddTo(t)
 	}
 }
 
-// Performs same benchmark as Add(t,Day) but not using our Add(Duration) method
+// Performs same benchmark as Day.AddTo(t) but not using our Duration.AddTo() method
 func BenchmarkAddDayExplicit(b *testing.B) {
 	t := parseTime("2001-02-03T12:45:56Z")
 	for i := 0; i < b.N; i++ {
@@ -255,11 +255,11 @@ func BenchmarkAddDayInLocation(b *testing.B) {
 	l, _ := time.LoadLocation("America/Montreal")
 	t := parseTime("2001-02-03T12:45:56Z").In(l)
 	for i := 0; i < b.N; i++ {
-		_ = Add(t, Day)
+		_ = Day.AddTo(t)
 	}
 }
 
-// Performs same benchmark as Add(t,Day) in Location but not using our Add(Duration) method
+// Performs same benchmark as Day.AddTo(t) in Location but not using our Duration.AddTo() method
 func BenchmarkAddDayInLocationExplicit(b *testing.B) {
 	l, _ := time.LoadLocation("America/Montreal")
 	t := parseTime("2001-02-03T12:45:56Z").In(l)
@@ -336,23 +336,6 @@ func ExampleWalk_year() {
 	// 2002-01-01 00:00:00 +0000 UTC
 	// 2003-01-01 00:00:00 +0000 UTC
 	// 2004-01-01 00:00:00 +0000 UTC
-}
-
-func Example_location() {
-	t1 := parseTime("2001-06-03T12:45:56Z")
-	t2 := parseTime("2001-01-03T12:45:56Z")
-	u, _ := time.LoadLocation("UTC")
-	// l, _ := time.LoadLocation("Local")
-	l, _ := time.LoadLocation("America/Montreal")
-	fmt.Printf("%v\n", t1.In(u))
-	fmt.Printf("%v\n", t2.In(u))
-	fmt.Printf("%v\n", t1.In(l))
-	fmt.Printf("%v\n", t2.In(l))
-	// Output:
-	// 2001-06-03 12:45:56 +0000 UTC
-	// 2001-01-03 12:45:56 +0000 UTC
-	// 2001-06-03 08:45:56 -0400 EDT
-	// 2001-01-03 07:45:56 -0500 EST
 }
 
 //  Below is Interval stuff

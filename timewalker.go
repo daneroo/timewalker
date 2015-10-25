@@ -30,7 +30,7 @@ func (d Duration) String() string {
 	return ""
 }
 
-func Round(t time.Time, d Duration) time.Time {
+func (d Duration) Round(t time.Time) time.Time {
 	year, month, day := t.Date()
 	switch d {
 	case Day:
@@ -41,10 +41,9 @@ func Round(t time.Time, d Duration) time.Time {
 		return time.Date(year, time.January, 1, 0, 0, 0, 0, t.Location())
 	}
 	return t
-
 }
 
-func Add(t time.Time, dur Duration) time.Time {
+func (dur Duration) AddTo(t time.Time) time.Time {
 	var y, m, d int
 	switch dur {
 	case Day:
@@ -60,10 +59,10 @@ func Add(t time.Time, dur Duration) time.Time {
 // produce times from a (incl) to b (excl)
 func Walk(a, b time.Time, d Duration) (<-chan time.Time, error) {
 	ch := make(chan time.Time)
-	ra := Round(a, d)
-	rb := Round(b, d)
+	ra := d.Round(a)
+	rb := d.Round(b)
 	if ra == rb {
-		rb = Add(rb, d)
+		rb = d.AddTo(rb)
 	}
 
 	// fmt.Printf("\n")
@@ -74,7 +73,7 @@ func Walk(a, b time.Time, d Duration) (<-chan time.Time, error) {
 		start := ra
 		for start.Before(rb) {
 			ch <- start
-			start = Add(start, d)
+			start = d.AddTo(start)
 		}
 		close(ch)
 	}()
