@@ -14,6 +14,7 @@ Truncate for D,M,Y: http://play.golang.org/p/PUNNHq9sh6
 * Seperate benchmarks
 
 ## Testing
+We have setup continuous testing on Codeship.
 
 ### Benchmarking
 
