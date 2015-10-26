@@ -20,30 +20,32 @@ func Example_daylightSavingsBoundaries() {
 	for day := range days {
 		hours := day.End.Sub(day.Start).Hours()
 		if hours != 24 {
-			fmt.Printf("%v has %.0f hours\n", day, hours)
+			zs, _ := day.Start.Zone()
+			ze, _ := day.End.Zone()
+			fmt.Printf("%v (%s->%s) has %.0f hours\n", day.Start.Format("2006-01-02"), zs, ze, hours)
 		}
 	}
 
 	// Output:
 	// DST boundaries in [2000-01-01T00:00:00-05:00, 2009-01-01T00:00:00-05:00)
-	// [2000-04-02T00:00:00-05:00, 2000-04-03T00:00:00-04:00) has 23 hours
-	// [2000-10-29T00:00:00-04:00, 2000-10-30T00:00:00-05:00) has 25 hours
-	// [2001-04-01T00:00:00-05:00, 2001-04-02T00:00:00-04:00) has 23 hours
-	// [2001-10-28T00:00:00-04:00, 2001-10-29T00:00:00-05:00) has 25 hours
-	// [2002-04-07T00:00:00-05:00, 2002-04-08T00:00:00-04:00) has 23 hours
-	// [2002-10-27T00:00:00-04:00, 2002-10-28T00:00:00-05:00) has 25 hours
-	// [2003-04-06T00:00:00-05:00, 2003-04-07T00:00:00-04:00) has 23 hours
-	// [2003-10-26T00:00:00-04:00, 2003-10-27T00:00:00-05:00) has 25 hours
-	// [2004-04-04T00:00:00-05:00, 2004-04-05T00:00:00-04:00) has 23 hours
-	// [2004-10-31T00:00:00-04:00, 2004-11-01T00:00:00-05:00) has 25 hours
-	// [2005-04-03T00:00:00-05:00, 2005-04-04T00:00:00-04:00) has 23 hours
-	// [2005-10-30T00:00:00-04:00, 2005-10-31T00:00:00-05:00) has 25 hours
-	// [2006-04-02T00:00:00-05:00, 2006-04-03T00:00:00-04:00) has 23 hours
-	// [2006-10-29T00:00:00-04:00, 2006-10-30T00:00:00-05:00) has 25 hours
-	// [2007-03-11T00:00:00-05:00, 2007-03-12T00:00:00-04:00) has 23 hours
-	// [2007-11-04T00:00:00-04:00, 2007-11-05T00:00:00-05:00) has 25 hours
-	// [2008-03-09T00:00:00-05:00, 2008-03-10T00:00:00-04:00) has 23 hours
-	// [2008-11-02T00:00:00-04:00, 2008-11-03T00:00:00-05:00) has 25 hours
+	// 2000-04-02 (EST->EDT) has 23 hours
+	// 2000-10-29 (EDT->EST) has 25 hours
+	// 2001-04-01 (EST->EDT) has 23 hours
+	// 2001-10-28 (EDT->EST) has 25 hours
+	// 2002-04-07 (EST->EDT) has 23 hours
+	// 2002-10-27 (EDT->EST) has 25 hours
+	// 2003-04-06 (EST->EDT) has 23 hours
+	// 2003-10-26 (EDT->EST) has 25 hours
+	// 2004-04-04 (EST->EDT) has 23 hours
+	// 2004-10-31 (EDT->EST) has 25 hours
+	// 2005-04-03 (EST->EDT) has 23 hours
+	// 2005-10-30 (EDT->EST) has 25 hours
+	// 2006-04-02 (EST->EDT) has 23 hours
+	// 2006-10-29 (EDT->EST) has 25 hours
+	// 2007-03-11 (EST->EDT) has 23 hours
+	// 2007-11-04 (EDT->EST) has 25 hours
+	// 2008-03-09 (EST->EDT) has 23 hours
+	// 2008-11-02 (EDT->EST) has 25 hours
 }
 
 // package level example parsing time in Location
