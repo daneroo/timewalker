@@ -6,6 +6,46 @@ import (
 	"time"
 )
 
+// package level example for finding DST Boundaries
+func Example_daylightSavingsBoundaries() {
+	loc, _ := time.LoadLocation("America/Montreal")
+	i, _ := Interval{
+		Start: time.Date(2000, time.January, 1, 0, 0, 0, 0, loc),
+		End:   time.Date(2009, time.January, 1, 0, 0, 0, 0, loc),
+	}.Round(Day)
+	fmt.Printf("DST boundaries in %v\n", i)
+
+	ch, _ := i.Walk(Day)
+
+	for day := range ch {
+		hours := day.End.Sub(day.Start).Hours()
+		if hours != 24 {
+			fmt.Printf("%v has %.0f hours\n", day, hours)
+		}
+	}
+
+	// Output:
+	// DST boundaries in [2000-01-01T00:00:00-05:00, 2009-01-01T00:00:00-05:00)
+	// [2000-04-02T00:00:00-05:00, 2000-04-03T00:00:00-04:00) has 23 hours
+	// [2000-10-29T00:00:00-04:00, 2000-10-30T00:00:00-05:00) has 25 hours
+	// [2001-04-01T00:00:00-05:00, 2001-04-02T00:00:00-04:00) has 23 hours
+	// [2001-10-28T00:00:00-04:00, 2001-10-29T00:00:00-05:00) has 25 hours
+	// [2002-04-07T00:00:00-05:00, 2002-04-08T00:00:00-04:00) has 23 hours
+	// [2002-10-27T00:00:00-04:00, 2002-10-28T00:00:00-05:00) has 25 hours
+	// [2003-04-06T00:00:00-05:00, 2003-04-07T00:00:00-04:00) has 23 hours
+	// [2003-10-26T00:00:00-04:00, 2003-10-27T00:00:00-05:00) has 25 hours
+	// [2004-04-04T00:00:00-05:00, 2004-04-05T00:00:00-04:00) has 23 hours
+	// [2004-10-31T00:00:00-04:00, 2004-11-01T00:00:00-05:00) has 25 hours
+	// [2005-04-03T00:00:00-05:00, 2005-04-04T00:00:00-04:00) has 23 hours
+	// [2005-10-30T00:00:00-04:00, 2005-10-31T00:00:00-05:00) has 25 hours
+	// [2006-04-02T00:00:00-05:00, 2006-04-03T00:00:00-04:00) has 23 hours
+	// [2006-10-29T00:00:00-04:00, 2006-10-30T00:00:00-05:00) has 25 hours
+	// [2007-03-11T00:00:00-05:00, 2007-03-12T00:00:00-04:00) has 23 hours
+	// [2007-11-04T00:00:00-04:00, 2007-11-05T00:00:00-05:00) has 25 hours
+	// [2008-03-09T00:00:00-05:00, 2008-03-10T00:00:00-04:00) has 23 hours
+	// [2008-11-02T00:00:00-04:00, 2008-11-03T00:00:00-05:00) has 25 hours
+}
+
 // package level example parsing time in Location
 func Example_parseTimeInLocation() {
 	// This is how we parse time literals with time.RFC3339
