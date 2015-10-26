@@ -15,9 +15,9 @@ func Example_daylightSavingsBoundaries() {
 	}.Round(Day)
 	fmt.Printf("DST boundaries in %v\n", i)
 
-	ch, _ := i.Walk(Day)
+	days, _ := i.Walk(Day)
 
-	for day := range ch {
+	for day := range days {
 		hours := day.End.Sub(day.Start).Hours()
 		if hours != 24 {
 			fmt.Printf("%v has %.0f hours\n", day, hours)
