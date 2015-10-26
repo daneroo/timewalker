@@ -164,28 +164,27 @@ func ExampleDuration_Floor_day() {
 	// 2001-02-03 07:45:56 -0500 EST -> 2001-02-03 00:00:00 -0500 EST (2001-02-03 05:00:00 +0000 UTC)
 }
 
-var durationAddingTests = []struct {
-	inp time.Time // input
-	dur Duration  // Rounding duration
-	exp time.Time // expected result
-}{
-	{ // Day
-		inp: parseTime("2001-02-03T12:45:56Z"),
-		dur: Day,
-		exp: parseTime("2001-02-04T12:45:56Z"),
-	}, { //Month
-		inp: parseTime("2001-02-03T12:45:56Z"),
-		dur: Month,
-		exp: parseTime("2001-03-03T12:45:56Z"),
-	}, { //Year
-		inp: parseTime("2001-02-03T12:45:56Z"),
-		dur: Year,
-		exp: parseTime("2002-02-03T12:45:56Z"),
-	},
-}
-
 func TestDurationAdding(t *testing.T) {
-	for _, tt := range durationAddingTests {
+	var testData = []struct {
+		inp time.Time // input
+		dur Duration  // Rounding duration
+		exp time.Time // expected result
+	}{
+		{ // Day
+			inp: parseTime("2001-02-03T12:45:56Z"),
+			dur: Day,
+			exp: parseTime("2001-02-04T12:45:56Z"),
+		}, { //Month
+			inp: parseTime("2001-02-03T12:45:56Z"),
+			dur: Month,
+			exp: parseTime("2001-03-03T12:45:56Z"),
+		}, { //Year
+			inp: parseTime("2001-02-03T12:45:56Z"),
+			dur: Year,
+			exp: parseTime("2002-02-03T12:45:56Z"),
+		},
+	}
+	for _, tt := range testData {
 		actual := tt.dur.AddTo(tt.inp)
 		if actual != tt.exp {
 			t.Errorf("%s.AddTo(%s): exp: %v, act: %v", tt.dur, tt.inp, tt.exp, actual)
@@ -194,7 +193,8 @@ func TestDurationAdding(t *testing.T) {
 }
 
 func TestWalkEmptyInterval(t *testing.T) {
-	ch, _ := Walk(parseTime("2001-02-03T12:45:56Z"), parseTime("2001-02-03T12:45:56Z"), Day)
+	sameInstant := parseTime("2001-02-03T12:45:56Z")
+	ch, _ := Walk(sameInstant, sameInstant, Day)
 	count := 0
 	for _ = range ch {
 		count++
@@ -204,35 +204,12 @@ func TestWalkEmptyInterval(t *testing.T) {
 	}
 }
 
-func ExampleWalk_month() {
-	ch, _ := Walk(parseTime("2004-02-03T12:45:56Z"), parseTime("2004-03-03T12:45:56Z"), Day)
+func ExampleWalk_day() {
+	ch, _ := Walk(parseTime("2004-02-26T12:45:56Z"), parseTime("2004-03-03T12:45:56Z"), Day)
 	for t := range ch {
 		fmt.Printf("%s\n", t)
 	}
 	// Output:
-	// 2004-02-03 00:00:00 +0000 UTC
-	// 2004-02-04 00:00:00 +0000 UTC
-	// 2004-02-05 00:00:00 +0000 UTC
-	// 2004-02-06 00:00:00 +0000 UTC
-	// 2004-02-07 00:00:00 +0000 UTC
-	// 2004-02-08 00:00:00 +0000 UTC
-	// 2004-02-09 00:00:00 +0000 UTC
-	// 2004-02-10 00:00:00 +0000 UTC
-	// 2004-02-11 00:00:00 +0000 UTC
-	// 2004-02-12 00:00:00 +0000 UTC
-	// 2004-02-13 00:00:00 +0000 UTC
-	// 2004-02-14 00:00:00 +0000 UTC
-	// 2004-02-15 00:00:00 +0000 UTC
-	// 2004-02-16 00:00:00 +0000 UTC
-	// 2004-02-17 00:00:00 +0000 UTC
-	// 2004-02-18 00:00:00 +0000 UTC
-	// 2004-02-19 00:00:00 +0000 UTC
-	// 2004-02-20 00:00:00 +0000 UTC
-	// 2004-02-21 00:00:00 +0000 UTC
-	// 2004-02-22 00:00:00 +0000 UTC
-	// 2004-02-23 00:00:00 +0000 UTC
-	// 2004-02-24 00:00:00 +0000 UTC
-	// 2004-02-25 00:00:00 +0000 UTC
 	// 2004-02-26 00:00:00 +0000 UTC
 	// 2004-02-27 00:00:00 +0000 UTC
 	// 2004-02-28 00:00:00 +0000 UTC
@@ -245,21 +222,21 @@ func ExampleWalk_monthLocalAndUTC() {
 	l, _ := time.LoadLocation("America/Montreal")
 	ch, _ := Walk(parseTime("2001-02-03T12:45:56Z").In(l), parseTime("2002-02-03T12:45:56Z"), Month)
 	for t := range ch {
-		fmt.Printf("%v %v\n", t, t.UTC())
+		fmt.Printf("%v (%v)\n", t, t.UTC())
 	}
 	// Output:
-	// 2001-02-01 00:00:00 -0500 EST 2001-02-01 05:00:00 +0000 UTC
-	// 2001-03-01 00:00:00 -0500 EST 2001-03-01 05:00:00 +0000 UTC
-	// 2001-04-01 00:00:00 -0500 EST 2001-04-01 05:00:00 +0000 UTC
-	// 2001-05-01 00:00:00 -0400 EDT 2001-05-01 04:00:00 +0000 UTC
-	// 2001-06-01 00:00:00 -0400 EDT 2001-06-01 04:00:00 +0000 UTC
-	// 2001-07-01 00:00:00 -0400 EDT 2001-07-01 04:00:00 +0000 UTC
-	// 2001-08-01 00:00:00 -0400 EDT 2001-08-01 04:00:00 +0000 UTC
-	// 2001-09-01 00:00:00 -0400 EDT 2001-09-01 04:00:00 +0000 UTC
-	// 2001-10-01 00:00:00 -0400 EDT 2001-10-01 04:00:00 +0000 UTC
-	// 2001-11-01 00:00:00 -0500 EST 2001-11-01 05:00:00 +0000 UTC
-	// 2001-12-01 00:00:00 -0500 EST 2001-12-01 05:00:00 +0000 UTC
-	// 2002-01-01 00:00:00 -0500 EST 2002-01-01 05:00:00 +0000 UTC
+	// 2001-02-01 00:00:00 -0500 EST (2001-02-01 05:00:00 +0000 UTC)
+	// 2001-03-01 00:00:00 -0500 EST (2001-03-01 05:00:00 +0000 UTC)
+	// 2001-04-01 00:00:00 -0500 EST (2001-04-01 05:00:00 +0000 UTC)
+	// 2001-05-01 00:00:00 -0400 EDT (2001-05-01 04:00:00 +0000 UTC)
+	// 2001-06-01 00:00:00 -0400 EDT (2001-06-01 04:00:00 +0000 UTC)
+	// 2001-07-01 00:00:00 -0400 EDT (2001-07-01 04:00:00 +0000 UTC)
+	// 2001-08-01 00:00:00 -0400 EDT (2001-08-01 04:00:00 +0000 UTC)
+	// 2001-09-01 00:00:00 -0400 EDT (2001-09-01 04:00:00 +0000 UTC)
+	// 2001-10-01 00:00:00 -0400 EDT (2001-10-01 04:00:00 +0000 UTC)
+	// 2001-11-01 00:00:00 -0500 EST (2001-11-01 05:00:00 +0000 UTC)
+	// 2001-12-01 00:00:00 -0500 EST (2001-12-01 05:00:00 +0000 UTC)
+	// 2002-01-01 00:00:00 -0500 EST (2002-01-01 05:00:00 +0000 UTC)
 }
 
 func ExampleWalk_year() {
@@ -274,83 +251,79 @@ func ExampleWalk_year() {
 	// 2004-01-01 00:00:00 +0000 UTC
 }
 
-//  Below is Interval stuff
-func parseIntvl(a, b string) Interval {
-	lyt := time.RFC3339
-	ta, err := time.Parse(lyt, a)
-	if err != nil {
-		panic(err)
-	}
-	tb, err := time.Parse(lyt, b)
-	if err != nil {
-		panic(err)
-	}
-	return Interval{Start: ta, End: tb}
-}
-
-var roundTests = []struct {
-	inp Interval      // input
-	dur time.Duration // Rounding duration
-	exp Interval      // expected result
-}{
-	{ // already ok
-		inp: parseIntvl("2000-01-01T00:00:00Z", "2001-01-01T00:00:00Z"),
-		dur: time.Second * 10,
-		exp: parseIntvl("2000-01-01T00:00:00Z", "2001-01-01T00:00:00Z"),
-	}, { //swap start, end
-		inp: parseIntvl("2001-01-01T00:00:00Z", "2000-01-01T00:00:00Z"),
-		dur: time.Second * 10,
-		exp: parseIntvl("2000-01-01T00:00:00Z", "2001-01-01T00:00:00Z"),
-	}, { //round start
-		inp: parseIntvl("2000-01-01T00:00:06Z", "2001-01-01T00:00:00Z"),
-		dur: time.Second * 10,
-		exp: parseIntvl("2000-01-01T00:00:00Z", "2001-01-01T00:00:00Z"),
-	}, { // round end - up
-		inp: parseIntvl("2000-01-01T00:00:00Z", "2001-01-01T00:00:06Z"),
-		dur: time.Second * 10,
-		exp: parseIntvl("2000-01-01T00:00:00Z", "2001-01-01T00:00:10Z"),
-	}, { // round end - up because before start+d
-		inp: parseIntvl("2000-01-01T00:00:00Z", "2000-01-01T00:00:06Z"),
-		dur: time.Second * 10,
-		exp: parseIntvl("2000-01-01T00:00:00Z", "2000-01-01T00:00:10Z"),
-	}, { // Try with Hour - round start, end ok
-		inp: parseIntvl("2000-01-01T01:23:45Z", "2001-01-01T00:00:00Z"),
-		dur: time.Hour,
-		exp: parseIntvl("2000-01-01T01:00:00Z", "2001-01-01T00:00:00Z"),
-	}, { // Hour - round end up
-		inp: parseIntvl("2000-01-01T01:23:45Z", "2001-01-01T01:23:45Z"),
-		dur: time.Hour,
-		exp: parseIntvl("2000-01-01T01:00:00Z", "2001-01-01T02:00:00Z"),
-	},
+func ExampleInterval_String() {
+	intvl := parseIntvl("2000-01-01T00:00:00Z", "2001-01-01T00:00:00Z")
+	fmt.Printf("%v\n", intvl)
+	// Output:
+	// [2000-01-01T00:00:00Z, 2001-01-01T00:00:00Z)
 }
 
 func TestRound(t *testing.T) {
-	t.Skip()
+	var roundTests = []struct {
+		inp Interval // input
+		dur Duration // Rounding duration
+		exp Interval // expected result
+	}{
+		{ // already ok
+			inp: parseIntvl("2000-01-01T00:00:00Z", "2001-01-01T00:00:00Z"),
+			dur: Day,
+			exp: parseIntvl("2000-01-01T00:00:00Z", "2001-01-01T00:00:00Z"),
+		}, { //swap start, end
+			inp: parseIntvl("2001-01-01T00:00:00Z", "2000-01-01T00:00:00Z"),
+			dur: Day,
+			exp: parseIntvl("2000-01-01T00:00:00Z", "2001-01-01T00:00:00Z"),
+		}, { //round start
+			inp: parseIntvl("2000-01-01T00:00:06Z", "2001-01-01T00:00:00Z"),
+			dur: Day,
+			exp: parseIntvl("2000-01-01T00:00:00Z", "2001-01-01T00:00:00Z"),
+		}, { // round end - up
+			inp: parseIntvl("2000-01-01T00:00:00Z", "2001-01-01T00:00:06Z"),
+			dur: Day,
+			exp: parseIntvl("2000-01-01T00:00:00Z", "2001-01-02T00:00:00Z"),
+		}, { // round end - up because before start+d
+			inp: parseIntvl("2000-01-01T00:00:00Z", "2000-01-01T00:00:06Z"),
+			dur: Day,
+			exp: parseIntvl("2000-01-01T00:00:00Z", "2000-01-02T00:00:00Z"),
+		},
+	}
 
 	for _, tt := range roundTests {
-		actual := tt.inp.Round(tt.dur)
-		t.Logf("-inp %v\n", tt.inp)
-		t.Logf("-dur %v\n", tt.dur)
-		t.Logf("-act %v\n", actual)
-		t.Logf("-exp %v\n", tt.exp)
+		actual, _ := tt.inp.Round(tt.dur)
 		if actual != tt.exp {
-			t.Errorf("Round(%s):\ninp :%v \nexp: %v, \nact: %v", tt.dur, tt.inp, tt.exp, actual)
+			t.Errorf("%v.Round(%s): \nexp: %v, \nact: %v", tt.inp, tt.dur, tt.exp, actual)
 		}
 	}
-	// i := Interval{Start: time.Unix(1e8, 0), End: time.Unix(10, 5e8)}
-	// t.Logf("-i %v\n", i)
-	// r := i.Round(time.Minute)
-	// t.Logf("+i %v\n", i)
-	// t.Logf("+r %v\n", r)
+}
+
+func ExampleInterval_Round() {
+	i := parseIntvl("2000-01-01T12:00:00Z", "2001-01-01T12:00:00Z")
+	ri, _ := i.Round(Day)
+	fmt.Printf("%v.Round(Day)==%v\n", i, ri)
+
+	// Now in location:
+	loc, _ := time.LoadLocation("America/Montreal")
+
+	i.Start = i.Start.In(loc)
+	i.End = i.End.In(loc)
+	ri, _ = i.Round(Day)
+	fmt.Printf("%v.Round(Day)==%v\n", i, ri)
+
+	//  Now with mismatched locations
+	i.Start = i.Start.UTC()
+	i.End = i.End.In(loc)
+	_, err := i.Round(Day)
+	fmt.Printf("%s\n", err)
+
+	// Output:
+	// [2000-01-01T12:00:00Z, 2001-01-01T12:00:00Z).Round(Day)==[2000-01-01T00:00:00Z, 2001-01-02T00:00:00Z)
+	// [2000-01-01T07:00:00-05:00, 2001-01-01T07:00:00-05:00).Round(Day)==[2000-01-01T00:00:00-05:00, 2001-01-02T00:00:00-05:00)
+	// Interval boundaries have in different time.Location: UTC!=America/Montreal, [2000-01-01T00:00:00Z, 2001-01-02T00:00:00-05:00)
 }
 
 func TestTimeWalker(t *testing.T) {
-	t.Skip()
-	return
-	// i := Interval{Start: time.Now(), End: time.Now().Add(10 * time.Second)}
-	i := Interval{Start: time.Unix(0, 0), End: time.Unix(10, 5e8)}
+	i := parseIntvl("2000-01-01T00:00:00Z", "2000-01-11T00:00:00Z")
 
-	ch, err := i.Iter(time.Second)
+	ch, err := i.Walk(Day)
 	if err != nil {
 		t.Errorf("TimeWalker generated unexpected error")
 	}
@@ -365,7 +338,7 @@ func TestTimeWalker(t *testing.T) {
 	}
 }
 
-// Utility function for time literals in our tests
+// Utility functions for time literals in our tests
 func parseTime(ts string) time.Time {
 	lyt := time.RFC3339
 	t, err := time.Parse(lyt, ts)
@@ -373,4 +346,9 @@ func parseTime(ts string) time.Time {
 		panic(err)
 	}
 	return t
+}
+
+//  Below is Interval stuff
+func parseIntvl(a, b string) Interval {
+	return Interval{Start: parseTime(a), End: parseTime(b)}
 }

@@ -97,48 +97,52 @@ type Interval struct {
 }
 
 func (i Interval) String() string {
-	// layout := time.RFC3339
-	layout := "2006-01-02T15:04:05.000Z07:00"
+	layout := time.RFC3339
 	return fmt.Sprintf("[%s, %s)", i.Start.Format(layout), i.End.Format(layout))
 }
 
-// This normalizes an Interval's representations
-// -swap Start,End if appropriate
-// Truncate Start, Round up End
-// Make sure we have at least one interval.
-// BUG(daneroo): Interval Rounding behavior is not well defined yet. This is also an example of a BUG comment showing up in the godocs
-
-func (i Interval) Round(d time.Duration) Interval {
+/*
+This normalizes an Interval's representations
+	-if Start,End are not in same location, throw
+	-Swap Start,End if appropriate (if End.Before(Start))
+	-Round down (Floor) Start, Round up (Ceil) End, both on Duration boundary
+	-Make sure we have at least one interval.
+*/
+func (i Interval) Round(d Duration) (Interval, error) {
+	// BUG(daneroo): Interval Rounding behavior is not well defined yet. This is also an example of a BUG comment showing up in the godocs
 	if i.End.Before(i.Start) {
 		i.End, i.Start = i.Start, i.End
 	}
-	i.Start = i.Start.Truncate(d)
-	// truncate End, if truncEnd<End, or truncEnd<Start, add 1 duration
-	truncEnd := i.End.Truncate(d)
-	if truncEnd.Before(i.End) {
-		i.End = truncEnd.Add(d)
-	} else if truncEnd.Before(i.Start.Add(d)) {
-		i.End = i.Start.Add(d)
-	} else {
-		i.End = truncEnd
+	i.Start = d.Floor(i.Start)
+	i.End = d.Ceil(i.End)
+
+	// minimum End is d.AddTo(i.Start)
+	// not sure this is actually possible...
+	// because we know i.Start <= i.End
+	// d.Floor(i.Start) <= d.Ceil(i.End)
+	minEnd := d.AddTo(i.Start)
+	if i.End.Before(minEnd) {
+		i.End = minEnd
 	}
-	return i
+	if i.Start.Location() != i.End.Location() {
+		return i, fmt.Errorf("Interval boundaries have in different time.Location: %s!=%s, %v", i.Start.Location(), i.End.Location(), i)
+	}
+	return i, nil
 }
 
-func (i Interval) Iter(d time.Duration) (<-chan Interval, error) {
+func (i Interval) Walk(d Duration) (<-chan Interval, error) {
+	// Round interval
+	ri, err := i.Round(d)
+	if err != nil {
+		return nil, err
+	}
+
 	ch := make(chan Interval)
 
-	// truncate start to duration
-	ri := i.Round(d)
-
-	fmt.Printf("\n")
-	fmt.Printf("%s\n", time.RFC3339)
-	fmt.Printf(" i: %v\n", i)
-	fmt.Printf("ri: %v\n", ri)
 	go func() {
 		start := ri.Start
 		for start.Before(ri.End) {
-			end := start.Add(d)
+			end := d.AddTo(start)
 			ch <- Interval{Start: start, End: end}
 			start = end
 		}
