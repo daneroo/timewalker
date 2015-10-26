@@ -133,6 +133,7 @@ func (i Interval) Round(d Duration) (Interval, error) {
 func (i Interval) Walk(d Duration) (<-chan Interval, error) {
 	// Round interval
 	ri, err := i.Round(d)
+	// TODO(daneroo) What is the idomatic way of returning the channel on error condition
 	if err != nil {
 		return nil, err
 	}
