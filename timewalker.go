@@ -31,7 +31,8 @@ func (d Duration) String() string {
 	return str
 }
 
-func (d Duration) Round(t time.Time) time.Time {
+// Returns the greatest time.Time that is on recievers Duration boundary; akin to math.Floor for ints
+func (d Duration) Floor(t time.Time) time.Time {
 	year, month, day := t.Date()
 	switch d {
 	case Day:
@@ -42,6 +43,15 @@ func (d Duration) Round(t time.Time) time.Time {
 		t = time.Date(year, time.January, 1, 0, 0, 0, 0, t.Location())
 	}
 	return t
+}
+
+// Returns the least time.Time that is on recievers Duration boundary; akin to math.Ceil for ints
+func (d Duration) Ceil(t time.Time) time.Time {
+	least := d.Floor(t)
+	if least.Before(t) {
+		least = d.AddTo(least)
+	}
+	return least
 }
 
 func (dur Duration) AddTo(t time.Time) time.Time {
@@ -60,8 +70,8 @@ func (dur Duration) AddTo(t time.Time) time.Time {
 // produce times from a (incl) to b (excl)
 func Walk(a, b time.Time, d Duration) (<-chan time.Time, error) {
 	ch := make(chan time.Time)
-	ra := d.Round(a)
-	rb := d.Round(b)
+	ra := d.Floor(a)
+	rb := d.Floor(b)
 	if ra == rb {
 		rb = d.AddTo(rb)
 	}

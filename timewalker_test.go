@@ -59,59 +59,109 @@ func ExampleDuration_String() {
 	// Year: Year
 }
 
-var durationRoundingTests = []struct {
-	inp time.Time // input
-	dur Duration  // Rounding duration
-	exp time.Time // expected result
-}{
-	{ // Day
-		inp: parseTime("2001-02-03T12:45:56Z"),
-		dur: Day,
-		exp: parseTime("2001-02-03T00:00:00Z"),
-	}, { //Month
-		inp: parseTime("2001-02-03T12:45:56Z"),
-		dur: Month,
-		exp: parseTime("2001-02-01T00:00:00Z"),
-	}, { //Year
-		inp: parseTime("2001-02-03T12:45:56Z"),
-		dur: Year,
-		exp: parseTime("2001-01-01T00:00:00Z"),
-	},
-}
-
-func TestDurationRounding(t *testing.T) {
-	for _, tt := range durationRoundingTests {
-		actual := tt.dur.Round(tt.inp)
+func TestDurationFloor(t *testing.T) {
+	var testData = []struct {
+		inp time.Time // input
+		dur Duration  // Rounding duration
+		exp time.Time // expected result
+	}{
+		{ // Day, already on boundary
+			inp: parseTime("2001-02-03T00:00:00Z"),
+			dur: Day,
+			exp: parseTime("2001-02-03T00:00:00Z"),
+		}, { //Day
+			inp: parseTime("2001-02-03T12:45:56Z"),
+			dur: Day,
+			exp: parseTime("2001-02-03T00:00:00Z"),
+		}, { //Month
+			inp: parseTime("2001-02-03T12:45:56Z"),
+			dur: Month,
+			exp: parseTime("2001-02-01T00:00:00Z"),
+		}, { //Year
+			inp: parseTime("2001-02-03T12:45:56Z"),
+			dur: Year,
+			exp: parseTime("2001-01-01T00:00:00Z"),
+		},
+	}
+	for _, tt := range testData {
+		actual := tt.dur.Floor(tt.inp)
 		if actual != tt.exp {
-			t.Errorf("%s.Round(%s): \nexp: %v, \nact: %v", tt.dur, tt.inp, tt.exp, actual)
+			t.Errorf("%s.Floor(%s): \nexp: %v, \nact: %v", tt.dur, tt.inp, tt.exp, actual)
 		}
 	}
 }
 
-func ExampleDuration_Round_month() {
+func TestDurationCeil(t *testing.T) {
+	var testData = []struct {
+		inp time.Time // input
+		dur Duration  // Rounding duration
+		exp time.Time // expected result
+	}{
+		{ // Day, already on Boundary
+			inp: parseTime("2001-02-03T00:00:00Z"),
+			dur: Day,
+			exp: parseTime("2001-02-03T00:00:00Z"),
+		}, { // Day
+			inp: parseTime("2001-02-03T12:45:56Z"),
+			dur: Day,
+			exp: parseTime("2001-02-04T00:00:00Z"),
+		}, { // Month
+			inp: parseTime("2001-02-03T12:45:56Z"),
+			dur: Month,
+			exp: parseTime("2001-03-01T00:00:00Z"),
+		}, { // Year
+			inp: parseTime("2001-02-03T12:45:56Z"),
+			dur: Year,
+			exp: parseTime("2002-01-01T00:00:00Z"),
+		},
+	}
+	for _, tt := range testData {
+		actual := tt.dur.Ceil(tt.inp)
+		if actual != tt.exp {
+			t.Errorf("%s.Ceil(%s): \nexp: %v, \nact: %v", tt.dur, tt.inp, tt.exp, actual)
+		}
+	}
+}
+
+func ExampleDuration_Ceil_day() {
+	t := parseTime("2001-02-03T12:45:56Z")
+	rt := Day.Ceil(t)
+	fmt.Printf("%v -> %v\n", t, rt)
+
+	// Now in location:
+	l, _ := time.LoadLocation("America/Montreal")
+	t = t.In(l)
+	rt = Day.Ceil(t)
+	fmt.Printf("%v -> %v (%v)\n", t, rt, rt.UTC())
+
+	// Output:
+	// 2001-02-03 12:45:56 +0000 UTC -> 2001-02-04 00:00:00 +0000 UTC
+	// 2001-02-03 07:45:56 -0500 EST -> 2001-02-04 00:00:00 -0500 EST (2001-02-04 05:00:00 +0000 UTC)
+}
+
+func ExampleDuration_Floor_month() {
 	// t := parseTime("2001-02-03T12:45:56Z")
 	t := parseTime("2001-02-03T12:45:56Z")
-	rt := Month.Round(t)
-	fmt.Printf("%v -> %v", t, rt)
+	rt := Month.Floor(t)
+	fmt.Printf("%v -> %v\n", t, rt)
 	// Output:
 	// 2001-02-03 12:45:56 +0000 UTC -> 2001-02-01 00:00:00 +0000 UTC
 }
 
-func ExampleDuration_Round_day() {
+func ExampleDuration_Floor_day() {
 	t := parseTime("2001-02-03T12:45:56Z")
-	rt := Day.Round(t)
-	fmt.Printf("%v -> %v", t, rt)
+	rt := Day.Floor(t)
+	fmt.Printf("%v -> %v\n", t, rt)
+
+	// Now in location:
+	l, _ := time.LoadLocation("America/Montreal")
+	t = t.In(l)
+	rt = Day.Floor(t)
+	fmt.Printf("%v -> %v (%v)\n", t, rt, rt.UTC())
+
 	// Output:
 	// 2001-02-03 12:45:56 +0000 UTC -> 2001-02-03 00:00:00 +0000 UTC
-}
-
-func ExampleDuration_Round_dayInLocation() {
-	l, _ := time.LoadLocation("America/Montreal")
-	t := parseTime("2001-02-03T12:45:56Z").In(l)
-	rt := Day.Round(t)
-	fmt.Printf("%v -> %v", t, rt)
-	// Output:
-	// 2001-02-03 07:45:56 -0500 EST -> 2001-02-03 00:00:00 -0500 EST
+	// 2001-02-03 07:45:56 -0500 EST -> 2001-02-03 00:00:00 -0500 EST (2001-02-03 05:00:00 +0000 UTC)
 }
 
 var durationAddingTests = []struct {

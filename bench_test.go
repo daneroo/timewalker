@@ -54,18 +54,33 @@ func BenchmarkAddDayInLocationExplicit(b *testing.B) {
 }
 
 ///////////////////////////
-/// Duration Rounding --bench Round
+/// Duration Rounding --bench 'Floor|Ceil'
 ///////////////////////////
 
-func BenchmarkRoundDay(b *testing.B) {
+func BenchmarkCeilDay(b *testing.B) {
 	t := parseTime("2001-02-03T12:45:56Z")
 	for i := 0; i < b.N; i++ {
-		_ = Day.Round(t)
+		_ = Day.Ceil(t)
 	}
 }
 
-// Performs same benchmark as Day.Round(t) but not using our Duration.Round() method
-func BenchmarkRoundDayExplicit(b *testing.B) {
+func BenchmarkCeilDayInLocation(b *testing.B) {
+	l, _ := time.LoadLocation("America/Montreal")
+	t := parseTime("2001-02-03T12:45:56Z").In(l)
+	for i := 0; i < b.N; i++ {
+		_ = Day.Ceil(t)
+	}
+}
+
+func BenchmarkFloorDay(b *testing.B) {
+	t := parseTime("2001-02-03T12:45:56Z")
+	for i := 0; i < b.N; i++ {
+		_ = Day.Floor(t)
+	}
+}
+
+// Performs same benchmark as Day.Floor(t) but not using our Duration.Floor() method
+func BenchmarkFloorDayExplicit(b *testing.B) {
 	t := parseTime("2001-02-03T12:45:56Z")
 	for i := 0; i < b.N; i++ {
 		year, month, day := t.Date()
@@ -73,16 +88,16 @@ func BenchmarkRoundDayExplicit(b *testing.B) {
 	}
 }
 
-func BenchmarkRoundDayInLocation(b *testing.B) {
+func BenchmarkFloorDayInLocation(b *testing.B) {
 	l, _ := time.LoadLocation("America/Montreal")
 	t := parseTime("2001-02-03T12:45:56Z").In(l)
 	for i := 0; i < b.N; i++ {
-		_ = Day.Round(t)
+		_ = Day.Floor(t)
 	}
 }
 
-// Performs same benchmark as Day.Round(t) in Location but not using our Duration.Round() method
-func BenchmarkRoundDayInLocationExplicit(b *testing.B) {
+// Performs same benchmark as Day.Floor(t) in Location but not using our Duration.Floor() method
+func BenchmarkFloorDayInLocationExplicit(b *testing.B) {
 	l, _ := time.LoadLocation("America/Montreal")
 	t := parseTime("2001-02-03T12:45:56Z").In(l)
 	for i := 0; i < b.N; i++ {
@@ -91,15 +106,15 @@ func BenchmarkRoundDayInLocationExplicit(b *testing.B) {
 	}
 }
 
-func BenchmarkRoundYear(b *testing.B) {
+func BenchmarkFloorYear(b *testing.B) {
 	t := parseTime("2001-02-03T12:45:56Z")
 	for i := 0; i < b.N; i++ {
-		_ = Year.Round(t)
+		_ = Year.Floor(t)
 	}
 }
 
-// Performs same benchmark as Year.Round(t) but not using our Duration.Round() method
-func BenchmarkRoundYearExplicit(b *testing.B) {
+// Performs same benchmark as Year.Floor(t) but not using our Duration.Floor() method
+func BenchmarkFloorYearExplicit(b *testing.B) {
 	t := parseTime("2001-02-03T12:45:56Z")
 	for i := 0; i < b.N; i++ {
 		year, _, _ := t.Date()
@@ -107,16 +122,16 @@ func BenchmarkRoundYearExplicit(b *testing.B) {
 	}
 }
 
-func BenchmarkRoundYearInLocation(b *testing.B) {
+func BenchmarkFloorYearInLocation(b *testing.B) {
 	l, _ := time.LoadLocation("America/Montreal")
 	t := parseTime("2001-02-03T12:45:56Z").In(l)
 	for i := 0; i < b.N; i++ {
-		_ = Year.Round(t)
+		_ = Year.Floor(t)
 	}
 }
 
-// Performs same benchmark as Year.Round(t) in Location but not using our Duration.Round() method
-func BenchmarkRoundYearInLocationExplicit(b *testing.B) {
+// Performs same benchmark as Year.Floor(t) in Location but not using our Duration.Floor() method
+func BenchmarkFloorYearInLocationExplicit(b *testing.B) {
 	l, _ := time.LoadLocation("America/Montreal")
 	t := parseTime("2001-02-03T12:45:56Z").In(l)
 	for i := 0; i < b.N; i++ {
