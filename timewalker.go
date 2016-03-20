@@ -31,7 +31,7 @@ func (d Duration) String() string {
 	return str
 }
 
-// Returns the greatest time.Time that is on recievers Duration boundary; akin to math.Floor for ints
+// Returns the greatest time.Time that is on receivers Duration boundary; akin to math.Floor for ints
 func (d Duration) Floor(t time.Time) time.Time {
 	year, month, day := t.Date()
 	switch d {
@@ -45,7 +45,7 @@ func (d Duration) Floor(t time.Time) time.Time {
 	return t
 }
 
-// Returns the least time.Time that is on recievers Duration boundary; akin to math.Ceil for ints
+// Returns the least time.Time that is on receivers Duration boundary; akin to math.Ceil for ints
 func (d Duration) Ceil(t time.Time) time.Time {
 	least := d.Floor(t)
 	if least.Before(t) {
