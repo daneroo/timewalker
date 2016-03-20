@@ -53,7 +53,7 @@ func (d Duration) Ceil(t time.Time) time.Time {
 	return least
 }
 
-// AddTo returns a new TIme by adding the reciever's duration to the passed time parameter
+// AddTo returns a new Time by adding the receiver's duration to the passed time parameter
 func (d Duration) AddTo(t time.Time) time.Time {
 	var yr, mo, dy int
 	switch d {
