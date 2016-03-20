@@ -238,7 +238,7 @@ func TestWalkEmptyInterval(t *testing.T) {
 	sameInstant := parseTime("2001-02-03T12:45:56Z")
 	ch, _ := Walk(sameInstant, sameInstant, Day)
 	count := 0
-	for _ = range ch {
+	for range ch {
 		count++
 	}
 	if count != 1 {
