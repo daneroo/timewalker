@@ -1,5 +1,4 @@
 // Package timewalker manages sequences of time instances. It is meant to be a source channel of time.Time, or timewalker.Interval
-
 package timewalker
 
 import (
@@ -7,7 +6,7 @@ import (
 	"time"
 )
 
-// Common Practical Durations, which do not have the same semantics as time.Duration (non-arithmetic), in the sense that not all years, month or days have the same length. For Examples are leap years, months with different number of days, and days on daylight savings boundaries which may not have 24 hours.
+// Duration represents common practical Durations, which do not have the same semantics as time.Duration (non-arithmetic), in the sense that not all years, month or days have the same length. For Examples are leap years, months with different number of days, and days on daylight savings boundaries which may not have 24 hours.
 type Duration int
 
 // Different pakage constants defining an enum type for Duration
@@ -31,7 +30,7 @@ func (d Duration) String() string {
 	return str
 }
 
-// Returns the greatest time.Time that is on receivers Duration boundary; akin to math.Floor for ints
+// Floor returns the greatest time.Time that is on receivers Duration boundary; akin to math.Floor for ints
 func (d Duration) Floor(t time.Time) time.Time {
 	year, month, day := t.Date()
 	switch d {
@@ -45,7 +44,7 @@ func (d Duration) Floor(t time.Time) time.Time {
 	return t
 }
 
-// Returns the least time.Time that is on receivers Duration boundary; akin to math.Ceil for ints
+// Ceil returns the least time.Time that is on receivers Duration boundary; akin to math.Ceil for ints
 func (d Duration) Ceil(t time.Time) time.Time {
 	least := d.Floor(t)
 	if least.Before(t) {
@@ -54,20 +53,21 @@ func (d Duration) Ceil(t time.Time) time.Time {
 	return least
 }
 
-func (dur Duration) AddTo(t time.Time) time.Time {
-	var y, m, d int
-	switch dur {
+// AddTo returns a new TIme by adding the reciever's duration to the passed time parameter
+func (d Duration) AddTo(t time.Time) time.Time {
+	var yr, mo, dy int
+	switch d {
 	case Day:
-		y, m, d = 0, 0, 1
+		yr, mo, dy = 0, 0, 1
 	case Month:
-		y, m, d = 0, 1, 0
+		yr, mo, dy = 0, 1, 0
 	case Year:
-		y, m, d = 1, 0, 0
+		yr, mo, dy = 1, 0, 0
 	}
-	return t.AddDate(y, m, d)
+	return t.AddDate(yr, mo, dy)
 }
 
-// produce times from a (incl) to b (excl)
+// Walk produces times from a (incl) to b (excl)
 func Walk(a, b time.Time, d Duration) (<-chan time.Time, error) {
 	ch := make(chan time.Time)
 	ra := d.Floor(a)
@@ -91,6 +91,7 @@ func Walk(a, b time.Time, d Duration) (<-chan time.Time, error) {
 	return ch, nil
 }
 
+// Interval represents a time interval from [Start,End)
 type Interval struct {
 	Start time.Time
 	End   time.Time
@@ -102,7 +103,7 @@ func (i Interval) String() string {
 }
 
 /*
-This normalizes an Interval's representations
+Round normalizes an Interval's representations
 	-if Start,End are not in same location, throw
 	-Swap Start,End if appropriate (if End.Before(Start))
 	-Round down (Floor) Start, Round up (Ceil) End, both on Duration boundary
@@ -130,6 +131,7 @@ func (i Interval) Round(d Duration) (Interval, error) {
 	return i, nil
 }
 
+// Walk traverses the receiver's interval in steps of  the given duration
 func (i Interval) Walk(d Duration) (<-chan Interval, error) {
 	// Round interval
 	ri, err := i.Round(d)

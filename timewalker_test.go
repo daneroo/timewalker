@@ -370,7 +370,7 @@ func TestTimeWalker(t *testing.T) {
 		t.Errorf("TimeWalker generated unexpected error")
 	}
 
-	result := make([]Interval, 0)
+	var result []Interval
 	for interval := range ch {
 		result = append(result, interval)
 	}
