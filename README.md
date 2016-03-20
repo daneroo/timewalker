@@ -1,4 +1,6 @@
-[ ![Codeship Status for daneroo/timewalker](https://codeship.com/projects/21b35630-5d7d-0133-51dc-6a352dca42a3/status?branch=master)](https://codeship.com/projects/111096)
+[![GoDoc](https://godoc.org/gopkg.in/fsnotify.v1?status.svg)](https://godoc.org/gopkg.in/fsnotify.v1)
+[![Codeship Status for daneroo/timewalker](https://codeship.com/projects/21b35630-5d7d-0133-51dc-6a352dca42a3/status?branch=master)](https://codeship.com/projects/111096)
+[![Go Report Card](https://goreportcard.com/badge/github.com/daneroo/timewalker)](https://goreportcard.com/report/github.com/daneroo/timewalker)
 
 # TimeWalker
 go package to generate sequential time intervals
