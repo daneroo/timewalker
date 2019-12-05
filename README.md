@@ -22,6 +22,7 @@ We have setup continuous testing on Codeship.
 
 ### Benchmarking
 
+    export TZ=America/Montreal
     go test --bench .
     go test --bench Round
     go test --bench Construct
