@@ -1,24 +1,26 @@
+# TimeWalker
+
 [![GoDoc](https://godoc.org/github.com/daneroo/timewalker?status.svg)](https://godoc.org/github.com/daneroo/timewalker)
 [![Codeship Status for daneroo/timewalker](https://codeship.com/projects/21b35630-5d7d-0133-51dc-6a352dca42a3/status?branch=master)](https://codeship.com/projects/111096)
 [![Go Report Card](https://goreportcard.com/badge/github.com/daneroo/timewalker)](https://goreportcard.com/report/github.com/daneroo/timewalker)
 
-# TimeWalker
 go package to generate sequential time intervals
 for days,months, and years, accounting for Timezones.
 
-Truncate for D,M,Y: http://play.golang.org/p/PUNNHq9sh6
+Truncate for D,M,Y: <http://play.golang.org/p/PUNNHq9sh6>
 
 ## TODO
 
 * Update Codeship - Move to GitHub actions
 * Clean up package examples
-    * Find DST boundary days
-    * Walk back days
+  * Find DST boundary days
+  * Walk back days
 * Wrapper/Interface type for Time
-* Consider *time.time in Interval, or *Interval in walker
-* Seperate benchmarks
+* Consider `*time.time` in Interval, or `*Interval` in walker
+* Separate benchmarks
 
 ## Testing
+
 We have setup continuous testing on Codeship.
 
 ### Benchmarking
