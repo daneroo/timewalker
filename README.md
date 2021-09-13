@@ -10,6 +10,7 @@ Truncate for D,M,Y: http://play.golang.org/p/PUNNHq9sh6
 
 ## TODO
 
+* Update Codeship - Move to GitHub actions
 * Clean up package examples
     * Find DST boundary days
     * Walk back days
