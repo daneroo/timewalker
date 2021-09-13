@@ -1,7 +1,7 @@
 # TimeWalker
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/daneroo/timewalker.svg)](https://pkg.go.dev/github.com/daneroo/timewalker)
-![Github Build Status](https://github.com/daneroo/timewalker/actions/workflows/test.yaml/badge.svg)
+[![GitHub Actions Test](https://github.com/daneroo/timewalker/actions/workflows/test.yaml/badge.svg)](https://github.com/daneroo/timewalker/actions/workflows/test.yaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/daneroo/timewalker)](https://goreportcard.com/report/github.com/daneroo/timewalker)
 
 go package to generate sequential time intervals
