@@ -23,7 +23,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.16.x
+        go-version: 1.x.x
     - name: Checkout code
       uses: actions/checkout@v2
     - uses: actions/cache@v2
@@ -41,4 +41,4 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-go-
     - name: Test
-      run: go test ./...
+      run: TZ=America/Montreal go test ./...
